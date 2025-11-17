@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import "./App.css";
 
 // Images
-import searchIcon from './assets/search.png';
-import sunIcon from './assets/sun.png';
-import cloudIcon from './assets/cloud.jpg';
-import drizzleIcon from './assets/drizzle.jpg';
-import rainIcon from './assets/rain.jpg';
-import windIcon from './assets/wind.png';
-import snowIcon from './assets/snow.png';
-import humidityIcon from './assets/humidity.png';
+import searchIcon from "./assets/search.png";
+import sunIcon from "./assets/sun.png";
+import cloudIcon from "./assets/cloud.jpg";
+import drizzleIcon from "./assets/drizzle.jpg";
+import rainIcon from "./assets/rain.jpg";
+import windIcon from "./assets/wind.png";
+import snowIcon from "./assets/snow.png";
+import humidityIcon from "./assets/humidity.png";
 
 function WeatherDetails({ icon, temp, city, country, lat, lon, humidity, wind }) {
   return (
@@ -66,10 +65,11 @@ function App() {
   const [lon, setLon] = useState(0);
   const [humidity, setHumidity] = useState(0);
   const [wind, setWind] = useState(0);
-  const [text, setText] = useState("Chennai");
+  const [text, setText] = useState("India");
   const [cityNotFound, setCityNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  
   const weatherIconMap = {
     "01d": sunIcon,
     "01n": sunIcon,
@@ -84,7 +84,7 @@ function App() {
     "10d": rainIcon,
     "10n": rainIcon,
     "13d": snowIcon,
-    "13n": snowIcon
+    "13n": snowIcon,
   };
 
   const search = async () => {
@@ -101,21 +101,29 @@ function App() {
         return;
       }
 
-      // Set Data
+      //  Temperature correct
+      setTemp(Number(data.main.temp.toFixed(1)));
+
+      //  Humidity correct
       setHumidity(data.main.humidity);
-      setWind(data.wind.speed);
-      setTemp(Math.floor(data.main.temp));
+
+      //  Wind m/s → km/h
+      const windKmph = (data.wind.speed * 3.6).toFixed(1);
+      setWind(windKmph);
+
+      //  Country, city, coordinates
       setCity(data.name);
       setCountry(data.sys.country);
       setLat(data.coord.lat);
       setLon(data.coord.lon);
 
+      //  Icon fixed
       const iconCode = data.weather[0].icon;
       setIcon(weatherIconMap[iconCode] || sunIcon);
 
       setCityNotFound(false);
     } catch (err) {
-      console.log("Weather API Error: ", err);
+      console.log("API Error:", err);
     }
 
     setLoading(false);
